@@ -1,5 +1,5 @@
-from django_filters.rest_framework import DjangoFilterBackend
 from django.db import models
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets
 
 from ..administrative_units.filterset import AdministrativeUnitFilterSet
@@ -32,6 +32,7 @@ from .serializers import (
     TagAutocompleteSerializer,
     UserAutocompleteSerializer,
 )
+
 
 class AdministrativeUnitAutocompleteViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = AdministrativeUnit.objects.only("id", "name").all()
@@ -89,7 +90,7 @@ class InstitutionAutocompleteViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         req = self.request
-        related_case_id = req.GET.get('case', None)
+        related_case_id = req.GET.get("case", None)
         if related_case_id is None:
             qs = Institution.objects.all()
         else:
@@ -98,9 +99,9 @@ class InstitutionAutocompleteViewSet(viewsets.ReadOnlyModelViewSet):
                 related=models.Case(
                     models.When(case=related_case_id, then=True),
                     default=False,
-                    output_field=models.BooleanField()
+                    output_field=models.BooleanField(),
                 )
-            ).order_by('-related')
+            ).order_by("-related")
         return qs.only("id", "name")
 
 
