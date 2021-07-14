@@ -17,6 +17,18 @@ class DocumentType(models.Model):
     )
 
 
+class ReferenceNumber(models.Model):
+    name = models.CharField(
+        max_length=256,
+        verbose_name=_("Reference number"),
+        help_text=_("Reference number of letter."),
+        unique=True,
+    )
+
+    def __str__(self):
+        return self.name
+
+
 class Letter(TimestampUserLogModel):
     class Direction(models.TextChoices):
         IN = "IN", "Received"
@@ -53,10 +65,11 @@ class Letter(TimestampUserLogModel):
         help_text=_("Excerpt of letter."),
         blank=True,
     )
-    reference_number = models.CharField(
-        max_length=256,
+    reference_number = models.ForeignKey(
+        to=ReferenceNumber,
+        on_delete=models.DO_NOTHING,
         verbose_name=_("Reference number"),
-        help_text=_("Reference number of letter."),
+        null=True,
         blank=True,
     )
     case = models.ForeignKey(
