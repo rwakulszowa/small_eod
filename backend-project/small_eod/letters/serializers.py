@@ -25,7 +25,7 @@ class ReferenceNumberSerializer(serializers.ModelSerializer):
 
 
 class LetterSerializer(UserLogModelSerializer):
-    reference_number = serializers.CharField()
+    reference_number = serializers.CharField(default=None)
     document_type = serializers.PrimaryKeyRelatedField(
         many=False, default=None, queryset=DocumentType.objects.all()
     )
@@ -63,9 +63,12 @@ class LetterSerializer(UserLogModelSerializer):
     def create(self, validated_data):
         # Reference numbers use the "tag" mode - they're provided by value and
         # created if not matching any known objects.
-        reference_number = ReferenceNumber.objects.get_or_create(
-            name=validated_data.pop("reference_number")
-        )[0]
+        reference_number_value = validated_data.pop("reference_number")
+        reference_number = (
+            ReferenceNumber.objects.get_or_create(name=reference_number_value)[0]
+            if reference_number_value is not None
+            else None
+        )
 
         channel = validated_data.pop("channel")
         document_type = validated_data.pop("document_type")
@@ -98,9 +101,12 @@ class LetterSerializer(UserLogModelSerializer):
         # Create a new reference number if necessary.
         # See comment in `create`.
         if "reference_number" in validated_data:
-            reference_number = ReferenceNumber.objects.get_or_create(
-                name=validated_data.pop("reference_number")
-            )[0]
+            reference_number_value = validated_data.pop("reference_number")
+            reference_number = (
+                ReferenceNumber.objects.get_or_create(name=reference_number_value)[0]
+                if reference_number_value is not None
+                else None
+            )
             validated_data["reference_number"] = reference_number
 
         return super().update(instance, validated_data)

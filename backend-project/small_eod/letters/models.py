@@ -29,7 +29,14 @@ class ReferenceNumber(models.Model):
         return self.name
 
 
+class LetterQuerySet(models.QuerySet):
+    def with_nested_resources(self):
+        return self.select_related("reference_number")
+
+
 class Letter(TimestampUserLogModel):
+    objects = LetterQuerySet.as_manager()
+
     class Direction(models.TextChoices):
         IN = "IN", "Received"
         OUT = "OUT", "Sent"
