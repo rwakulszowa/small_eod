@@ -13,8 +13,8 @@ from .models import DocumentType, Letter, ReferenceNumber
 from .serializers import (
     DocumentTypeSerializer,
     LetterSerializer,
-    SignRequestSerializer,
     ReferenceNumberSerializer,
+    SignRequestSerializer,
 )
 
 
